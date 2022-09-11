@@ -8,4 +8,39 @@ services:
     restart: always
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
-      - "$PORTAINER_DATA_DIR:/data"
+      - "portainer_data:/data"
+  obsidian:
+    build:
+      context: obsidian
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - 8888:8080
+    volumes:
+      - "obsidian_vault:/vaults"
+      - "obsidian_config:/config"
+    environment:
+      - PUID=1000
+      - PGID=1000
+      - KEYBOARD=en-us-qwerty
+      - DOCKER_MODS=linuxserver/mods:universal-git
+
+volumes:
+  obsidian_vault:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $OBSIDIAN_VAULT_DIR
+  obsidian_config:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $OBSIDIAN_CONFIG_DIR
+  portainer_data:
+    driver: local
+    driver_opts:
+      type: 'none'
+      o: 'bind'
+      device: $PORTAINER_DATA_DIR
