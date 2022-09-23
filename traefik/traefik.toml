@@ -1,0 +1,62 @@
+[global]
+  checkNewVersion = true
+  sendAnonymousUsage = false
+
+[providers]
+  [providers.docker] # Discover containers using Docker API
+    endpoint = "unix:///var/run/docker.sock"
+    swarmMode = false
+    network = "traefik_proxy"
+    exposedByDefault = false # Do not expose all containers in the same network by default
+  [providers.file]
+    directory = "/traefik/rules" # Load dynamic configuration from one or more .toml or .yml files in a directory.
+    watch = true # Reload on change, only works on top level files of the directory
+
+# ============ #
+# API Settings #
+# ============ #
+[api]
+  dashboard = true # Enable Traefik dashboard
+
+
+# ============ #
+# Log Settings #
+# ============ #
+[log]
+  level = "DEBUG"
+  filePath = "/traefik/traefik.log"
+
+# =================== #
+# Access Log Settings #
+# =================== #
+[accessLog]
+  filePath = "/traefik/access.log"
+  bufferingSize = 100 # Configuring a buffer of 100 lines
+  [accessLog.filters]
+    statusCodes = [ "204-299", "400-499", "500-599" ]
+
+# ============ #
+# Entry Points #
+# ============ #
+[entrypoints]
+  [entrypoints.http]
+    address = ":80"
+    [entrypoints.https.http.tls] # insecure listener for redireting traffic through TLS
+      # delegate tls settings to dynamic config
+      options = "tls-opts@file"
+      certresolver = "dns-cloudflare"
+  [entrypoints.https]
+    address = ":443"
+  [entrypoints.traefik]
+    address = ":8080"
+
+# ============================ #
+# DNS Challenge for CloudFlare #
+# ============================ #
+[certificatesResolvers.dns-cloudflare.acme]
+  storage = "/traefik/acme.json"
+  # caServer = https://acme-staging-v02.api.letsencrypt.org/directory # Staging Server - uncomment when testing
+  [certificatesResolvers.dns-cloudflare.acme.dnsChallenge]
+    provider = "cloudflare"
+    resolvers = [ "1.1.1.1:53", "1.0.0.1:53" ]
+    delayBeforeCheck = 90 # To delay DNS check and reduce LE hitrate
