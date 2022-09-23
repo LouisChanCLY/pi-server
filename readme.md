@@ -68,7 +68,7 @@ server.
     * uncomment the following line in the docker-compose file:
 
         `- "traefik.http.routers.traefik-rtr.tls.certresolver=dns-cloudflare"`
-    
+
     * uncomment the following line in `traefik.toml`
 
         `caServer = https://acme-staging-v02.api.letsencrypt.org/directory`
@@ -78,5 +78,7 @@ server.
         > certificate.
 
 8. Voila! Try it out on `https://traefik.your.domain` with the username and password that you have created.
+
+---
 
 Maintained by Louis Chan
