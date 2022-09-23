@@ -3,41 +3,15 @@ version: "3"
 services:
   portainer:
     image: portainer/portainer-ce:latest
+    container_name: "portainer"
     ports:
       - 9000:9000
     restart: always
     volumes:
       - "/var/run/docker.sock:/var/run/docker.sock"
       - "portainer_data:/data"
-  obsidian:
-    build:
-      context: obsidian
-      dockerfile: Dockerfile
-    restart: unless-stopped
-    ports:
-      - 8888:8080
-    volumes:
-      - "obsidian_vault:/vaults"
-      - "obsidian_config:/config"
-    environment:
-      - PUID=1000
-      - PGID=1000
-      - KEYBOARD=en-us-qwerty
-      - DOCKER_MODS=linuxserver/mods:universal-git
 
 volumes:
-  obsidian_vault:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: $OBSIDIAN_VAULT_DIR
-  obsidian_config:
-    driver: local
-    driver_opts:
-      type: 'none'
-      o: 'bind'
-      device: $OBSIDIAN_CONFIG_DIR
   portainer_data:
     driver: local
     driver_opts:
