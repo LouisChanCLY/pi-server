@@ -23,7 +23,7 @@
 # Log Settings #
 # ============ #
 [log]
-  level = "DEBUG"
+  level = "INFO"
   filePath = "/traefik/traefik.log"
 
 # =================== #
